@@ -10,12 +10,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import conexao.Conexao;
+import controller.CarroController;
 import dao.CarroDAO;
 import model.Carro;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -110,9 +113,12 @@ public class TelaPrincipal {
 		JButton btnAlterar = new JButton("Alterar Carro");
 		btnAlterar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				int posicao = list.getSelectedIndex();
 				Carro carro = list.getSelectedValue();
+				carro.setAno(txtAno.getText());
+				carro.setModelo(txtModelo.getText());
 				CarroController.alterarCarro(carro);
-				flush();
+				defaultListModel.set(posicao, carro);
 			}
 		});
 		
@@ -135,16 +141,11 @@ public class TelaPrincipal {
 			public void actionPerformed(ActionEvent arg0) {
 				Carro carro = new Carro(0, txtModelo.getText(), txtAno.getText());
 				CarroController.adicionar(carro);
-				flush();
+				defaultListModel.addElement(carro);
 			}
 		});
 		btnCriar.setBounds(337, 2, 180, 44);
 		frame.getContentPane().add(btnCriar);
 	}
 
-	protected void flush() {
-		defaultListModel.removeAllElements();
-		defaultListModel.addAll(CarroController.listar());
-		
-	}
 }

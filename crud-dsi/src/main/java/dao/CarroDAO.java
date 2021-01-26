@@ -11,11 +11,11 @@ import conexao.Conexao;
 import model.Carro;
 
 public class CarroDAO {
-	
+
 	public Conexao con = null;
 	ResultSet rs;
 	ArrayList<Carro> lista = new ArrayList<Carro>();
-	
+
 	public int carroSize() {
 		String sql = "select count(*) from carros";
 		try {
@@ -26,47 +26,47 @@ public class CarroDAO {
 			e.printStackTrace();
 		}
 		return 0;
-		
+
 	}
-	
-	public void salvarCarro(Carro carro) {
-		
+
+	public void salvarCarro(Carro carro) throws Exception {
+
 		try {
-			int tamanho = pesquisarCarro().size();
+			int ultimoID = ultimoID();
 			this.con = Conexao.getInstance();
-		
+
 			String sql = "insert into carros (id, nome, ano) values (?, ?, ?)";
 			PreparedStatement pstm = con.getConexao().prepareStatement(sql);
-			pstm.setInt(1, ++tamanho);
+			pstm.setInt(1, ++ultimoID);
 			pstm.setString(2, carro.getModelo());
 			pstm.setString(3, carro.getAno());
 			pstm.executeUpdate();
-			
+
 			JOptionPane.showMessageDialog(null, "Registro salvo com sucesso !");
-			
-		} catch(SQLException e) {
+
+		} catch (SQLException e) {
 			System.out.println("Erro inserindo carro: " + e);
 			e.printStackTrace();
-		}	
+		}
 	}
-	
-	public ArrayList<Carro> pesquisarCarro(){
+
+	public ArrayList<Carro> pesquisarCarro() {
 		try {
 			this.con = Conexao.getInstance();
 			String sql = "select * from carros";
 			PreparedStatement pstm = con.getConexao().prepareStatement(sql);
 			rs = pstm.executeQuery();
-			
-			while(rs.next()) {
+
+			while (rs.next()) {
 				Carro carro = new Carro();
 				carro.setId(rs.getInt("id"));
 				carro.setModelo(rs.getString("nome"));
 				carro.setAno(rs.getString("ano"));
-				
+
 				lista.add(carro);
 			}
-			
-		}catch (SQLException e) {
+
+		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro na pesquisa:" + e);
 		}
 		return lista;
@@ -79,30 +79,46 @@ public class CarroDAO {
 			PreparedStatement pstm = con.getConexao().prepareStatement(sql);
 			pstm.setInt(1, carro.getId());
 			pstm.executeUpdate();
-			
+
 			JOptionPane.showMessageDialog(null, "Registro excluido  com sucesso!");
-		}catch(SQLException erro) {
+		} catch (SQLException erro) {
 			JOptionPane.showMessageDialog(null, "Funcionario EXCLUIR" + erro);
 		}
-	}	
-	
-	public void alterarCarro(Carro carro) {
-		
-		try {
-		
-		this.con = Conexao.getInstance();
-		String sql = "update carros set nome = ?, ano = ? where id = ? ";
-		PreparedStatement pstm = con.getConexao().prepareStatement(sql);
-		pstm.setString(1, carro.getModelo());
-		pstm.setString(2, carro.getAno());
-		pstm.setInt(3, carro.getId());
-		pstm.executeUpdate();
-		
-		JOptionPane.showMessageDialog(null, "Registro alterado com sucesso!");
-		
-	
-		}catch(SQLException erro) {
-			JOptionPane.showMessageDialog(null, "Funcionario ALTERAR" + erro);
 	}
-}
+
+	public void alterarCarro(Carro carro) {
+
+		try {
+
+			this.con = Conexao.getInstance();
+			String sql = "update carros set nome = ?, ano = ? where id = ? ";
+			PreparedStatement pstm = con.getConexao().prepareStatement(sql);
+			pstm.setString(1, carro.getModelo());
+			pstm.setString(2, carro.getAno());
+			pstm.setInt(3, carro.getId());
+			pstm.executeUpdate();
+
+			JOptionPane.showMessageDialog(null, "Registro alterado com sucesso!");
+
+		} catch (SQLException erro) {
+			JOptionPane.showMessageDialog(null, "Funcionario ALTERAR" + erro);
+		}
+	}
+	
+	public int ultimoID() throws Exception {
+		try {
+			this.con = Conexao.getInstance();
+			String sql = "select id from carros order by id desc";
+			PreparedStatement pstm = con.getConexao().prepareStatement(sql);
+			rs = pstm.executeQuery();
+			rs.next();
+			
+			return rs.getInt("id");
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
 }

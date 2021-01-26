@@ -1,6 +1,9 @@
-package view;
+package controller;
+
 
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 
 import dao.CarroDAO;
 import model.Carro;
@@ -14,7 +17,13 @@ public class CarroController {
 	}
 
 	public static void adicionar(Carro carro) {
-		carroDAO.salvarCarro(carro);		
+		try {
+			carroDAO.salvarCarro(carro);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro criando carro");
+		}		
 	}
 	
 	public static ArrayList<Carro> listar(){

@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+
 public class Carro {
 
 	private int id;
@@ -37,4 +39,5 @@ public class Carro {
 	public String toString() {
 		return "Carro [ modelo=" + modelo + ", ano=" + ano + "]";
 	}
+	
 }
